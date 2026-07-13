@@ -47,3 +47,17 @@ def eliminar_estudiante(id_estudiante):
     cursor.execute("DELETE FROM estudiantes WHERE id = ?", (id_estudiante,))
     conexion.commit()
     conexion.close()
+
+import sqlite3
+
+def actualizar_estudiante(id_estudiante, nombre, email, edad, curso, telefono, direccion):
+    conexion = sqlite3.connect("modulos/base_datos/database.db")
+    cursor = conexion.cursor()
+    cursor.execute("""
+        UPDATE estudiantes
+        SET nombre = ?, email = ?, edad = ?, curso = ?, telefono = ?, direccion = ?
+        WHERE id = ?
+    """, (nombre, email, edad, curso, telefono, direccion, id_estudiante))
+    conexion.commit()
+    conexion.close()
+
