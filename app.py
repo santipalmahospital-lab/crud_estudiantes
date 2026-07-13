@@ -104,3 +104,62 @@ tk.Button(root, text="Actualizar Estudiante", command=actualizar).grid(row=9, co
 # Mantener la ventana abierta
 root.mainloop()
 
+import tkinter as tk
+from modulos.estudiantes import crear_estudiante, ver_estudiantes
+
+# Ventana principal
+root = tk.Tk()
+root.title("Gestión de Estudiantes")
+
+# Campos de entrada
+tk.Label(root, text="Nombre").grid(row=0, column=0)
+nombre = tk.Entry(root)
+nombre.grid(row=0, column=1)
+
+tk.Label(root, text="Email").grid(row=1, column=0)
+email = tk.Entry(root)
+email.grid(row=1, column=1)
+
+tk.Label(root, text="Edad").grid(row=2, column=0)
+edad = tk.Entry(root)
+edad.grid(row=2, column=1)
+
+tk.Label(root, text="Curso").grid(row=3, column=0)
+curso = tk.Entry(root)
+curso.grid(row=3, column=1)
+
+tk.Label(root, text="Teléfono").grid(row=4, column=0)
+telefono = tk.Entry(root)
+telefono.grid(row=4, column=1)
+
+tk.Label(root, text="Dirección").grid(row=5, column=0)
+direccion = tk.Entry(root)
+direccion.grid(row=5, column=1)
+
+# Funciones de botones
+def registrar():
+    crear_estudiante(
+        nombre.get(),
+        email.get(),
+        edad.get(),
+        curso.get(),
+        telefono.get(),
+        direccion.get()
+    )
+    nombre.delete(0, tk.END)
+    email.delete(0, tk.END)
+    edad.delete(0, tk.END)
+    curso.delete(0, tk.END)
+    telefono.delete(0, tk.END)
+    direccion.delete(0, tk.END)
+
+def mostrar():
+    estudiantes = ver_estudiantes()
+    for est in estudiantes:
+        print(est)
+
+# Botones
+tk.Button(root, text="Registrar", command=registrar).grid(row=6, column=0)
+tk.Button(root, text="Ver Estudiantes", command=mostrar).grid(row=6, column=1)
+
+root.mainloop()
