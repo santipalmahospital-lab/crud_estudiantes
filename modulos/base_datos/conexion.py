@@ -1,45 +1,30 @@
 import sqlite3
 
 def crear_base_datos():
-    conn = sqlite3.connect("modulos/base_datos/database.db")
-    cursor = conn.cursor()
+    # Conexión a la base de datos (se crea si no existe)
+    conexion = sqlite3.connect("modulos/base_datos/database.db")
+    cursor = conexion.cursor()
+
+    # Crear tabla estudiantes con todas las columnas necesarias
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS estudiantes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre TEXT NOT NULL,
             email TEXT NOT NULL,
             edad INTEGER NOT NULL,
-            curso TEXT NOT NULL
+            curso TEXT NOT NULL,
+            telefono TEXT,
+            direccion TEXT
         )
     """)
-    conn.commit()
-    conn.close()
 
-# Ejecutar la función automáticamente al correr el archivo
-if __name__ == "__main__":
-    crear_base_datos()
-    import sqlite3
-
-def crear_base_datos():
-    conexion = sqlite3.connect("modulos/base_datos/database.db")
-    cursor = conexion.cursor()
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS estudiantes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT NOT NULL,
-        email TEXT NOT NULL,
-        edad INTEGER,
-        curso TEXT,
-        telefono TEXT,
-        direccion TEXT
-    )
-    ''')
     conexion.commit()
     conexion.close()
 
+# Ejecutar directamente si corres este archivo
 if __name__ == "__main__":
     crear_base_datos()
+    print("Base de datos y tabla 'estudiantes' creadas correctamente.")
 
- 
 
 

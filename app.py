@@ -1,117 +1,48 @@
-import tkinter as tk
-from modulos.estudiantes import crear_estudiante, leer_estudiantes, eliminar_estudiante, actualizar_estudiante
+import sqlite3
+from modulos.estudiantes import crear_estudiante, ver_estudiantes, eliminar_estudiante, actualizar_estudiante
 
-# Crear ventana principal
+def crear_estudiante(nombre, email, edad, curso, telefono, direccion):
+    conexion = sqlite3.connect("modulos/base_datos/database.db")
+    cursor = conexion.cursor()
+    cursor.execute("""
+        INSERT INTO estudiantes (nombre, email, edad, curso, telefono, direccion)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (nombre, email, edad, curso, telefono, direccion))
+    conexion.commit()
+    conexion.close()
+
+def ver_estudiantes():
+    conexion = sqlite3.connect("modulos/base_datos/database.db")
+    cursor = conexion.cursor()
+    cursor.execute("SELECT * FROM estudiantes")
+    estudiantes = cursor.fetchall()
+    conexion.close()
+    return estudiantes
+
+def eliminar_estudiante(id_estudiante):
+    conexion = sqlite3.connect("modulos/base_datos/database.db")
+    cursor = conexion.cursor()
+    cursor.execute("DELETE FROM estudiantes WHERE id = ?", (id_estudiante,))
+    conexion.commit()
+    conexion.close()
+
+def actualizar_estudiante(id_estudiante, nombre, email, edad, curso, telefono, direccion):
+    conexion = sqlite3.connect("modulos/base_datos/database.db")
+    cursor = conexion.cursor()
+    cursor.execute("""
+        UPDATE estudiantes
+        SET nombre = ?, email = ?, edad = ?, curso = ?, telefono = ?, direccion = ?
+        WHERE id = ?
+    """, (nombre, email, edad, curso, telefono, direccion, id_estudiante))
+    conexion.commit()
+    conexion.close()
+import tkinter as tk
+from modulos.estudiantes import crear_estudiante, ver_estudiantes, eliminar_estudiante, actualizar_estudiante
+
 root = tk.Tk()
 root.title("Gestión de Estudiantes")
 
-# Campos de entrada
-tk.Label(root, text="Nombre").grid(row=0, column=0)
-nombre = tk.Entry(root)
-nombre.grid(row=0, column=1)
-
-tk.Label(root, text="Email").grid(row=1, column=0)
-email = tk.Entry(root)
-email.grid(row=1, column=1)
-
-tk.Label(root, text="Edad").grid(row=2, column=0)
-edad = tk.Entry(root)
-edad.grid(row=2, column=1)
-
-tk.Label(root, text="Curso").grid(row=3, column=0)
-curso = tk.Entry(root)
-curso.grid(row=3, column=1)
-
-# Función para registrar
-def registrar():
-    crear_estudiante(nombre.get(), email.get(), edad.get(), curso.get())
-    print("Estudiante registrado")
-
-tk.Button(root, text="Registrar", command=registrar).grid(row=4, column=0, columnspan=2)
-
-# Función para mostrar estudiantes
-def mostrar_estudiantes():
-    estudiantes = leer_estudiantes()
-    ventana_lista = tk.Toplevel(root)
-    ventana_lista.title("Lista de Estudiantes")
-
-    tk.Label(ventana_lista, text="ID | Nombre | Email | Edad | Curso", font=("Arial", 10, "bold")).pack()
-
-    for e in estudiantes:
-        texto = f"{e[0]} | {e[1]} | {e[2]} | {e[3]} | {e[4]}"
-        tk.Label(ventana_lista, text=texto).pack()
-
-tk.Button(root, text="Ver Estudiantes", command=mostrar_estudiantes).grid(row=5, column=0, columnspan=2)
-
-# Campo y botón para eliminar
-tk.Label(root, text="ID a eliminar").grid(row=6, column=0)
-id_eliminar = tk.Entry(root)
-id_eliminar.grid(row=6, column=1)
-
-def eliminar():
-    eliminar_estudiante(int(id_eliminar.get()))
-    print("Estudiante eliminado")
-
-tk.Button(root, text="Eliminar Estudiante", command=eliminar).grid(row=7, column=0, columnspan=2)
-
-# Campo y botón para actualizar
-tk.Label(root, text="ID a actualizar").grid(row=8, column=0)
-id_actualizar = tk.Entry(root)
-id_actualizar.grid(row=8, column=1)
-
-def actualizar():
-    actualizar_estudiante(
-        int(id_actualizar.get()),
-        nombre.get(),
-        email.get(),
-        edad.get(),
-        curso.get()
-    )
-    print("Estudiante actualizado")
-
-tk.Button(root, text="Actualizar Estudiante", command=actualizar).grid(row=9, column=0, columnspan=2)
-
-# Mantener la ventana abierta
-root.mainloop()
-# Campo y botón para eliminar
-tk.Label(root, text="ID a eliminar").grid(row=6, column=0)
-id_eliminar = tk.Entry(root)
-id_eliminar.grid(row=6, column=1)
-
-def eliminar():
-    eliminar_estudiante(int(id_eliminar.get()))
-    print("Estudiante eliminado")
-
-tk.Button(root, text="Eliminar Estudiante", command=eliminar).grid(row=7, column=0, columnspan=2)
-
-# Campo y botón para actualizar
-tk.Label(root, text="ID a actualizar").grid(row=8, column=0)
-id_actualizar = tk.Entry(root)
-id_actualizar.grid(row=8, column=1)
-
-def actualizar():
-    actualizar_estudiante(
-        int(id_actualizar.get()),
-        nombre.get(),
-        email.get(),
-        edad.get(),
-        curso.get()
-    )
-    print("Estudiante actualizado")
-
-tk.Button(root, text="Actualizar Estudiante", command=actualizar).grid(row=9, column=0, columnspan=2)
-
-# Mantener la ventana abierta
-root.mainloop()
-
-import tkinter as tk
-from modulos.estudiantes import crear_estudiante, ver_estudiantes
-
-# Ventana principal
-root = tk.Tk()
-root.title("Gestión de Estudiantes")
-
-# Campos de entrada
+# Campos
 tk.Label(root, text="Nombre").grid(row=0, column=0)
 nombre = tk.Entry(root)
 nombre.grid(row=0, column=1)
@@ -136,7 +67,16 @@ tk.Label(root, text="Dirección").grid(row=5, column=0)
 direccion = tk.Entry(root)
 direccion.grid(row=5, column=1)
 
-# Funciones de botones
+# Campos para ID
+tk.Label(root, text="ID a eliminar").grid(row=6, column=0)
+id_eliminar = tk.Entry(root)
+id_eliminar.grid(row=6, column=1)
+
+tk.Label(root, text="ID a actualizar").grid(row=7, column=0)
+id_actualizar = tk.Entry(root)
+id_actualizar.grid(row=7, column=1)
+
+# Funciones
 def registrar():
     crear_estudiante(
         nombre.get(),
@@ -146,20 +86,30 @@ def registrar():
         telefono.get(),
         direccion.get()
     )
-    nombre.delete(0, tk.END)
-    email.delete(0, tk.END)
-    edad.delete(0, tk.END)
-    curso.delete(0, tk.END)
-    telefono.delete(0, tk.END)
-    direccion.delete(0, tk.END)
 
 def mostrar():
     estudiantes = ver_estudiantes()
     for est in estudiantes:
         print(est)
 
+def eliminar():
+    eliminar_estudiante(int(id_eliminar.get()))
+
+def actualizar():
+    actualizar_estudiante(
+        int(id_actualizar.get()),
+        nombre.get(),
+        email.get(),
+        edad.get(),
+        curso.get(),
+        telefono.get(),
+        direccion.get()
+    )
+
 # Botones
-tk.Button(root, text="Registrar", command=registrar).grid(row=6, column=0)
-tk.Button(root, text="Ver Estudiantes", command=mostrar).grid(row=6, column=1)
+tk.Button(root, text="Registrar", command=registrar).grid(row=8, column=0)
+tk.Button(root, text="Ver Estudiantes", command=mostrar).grid(row=8, column=1)
+tk.Button(root, text="Eliminar", command=eliminar).grid(row=9, column=0)
+tk.Button(root, text="Actualizar", command=actualizar).grid(row=9, column=1)
 
 root.mainloop()
